@@ -161,10 +161,12 @@ Standard sizes:
 ui.add(ProfilePreview::new(profile, img_cache));
 
 // Simple preview
+let note_options = notedeck::NoteOptions::default(); // Or get from context
 ui.add(SimpleProfilePreview::new(
     Some(profile),  // Option<&ProfileRecord>
     img_cache,
-    is_nsec         // Whether this is a full keypair
+    is_nsec,         // Whether this is a full keypair
+    note_options,
 ));
 ```
 

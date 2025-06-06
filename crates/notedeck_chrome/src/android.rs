@@ -68,8 +68,8 @@ pub async fn android_main(app: AndroidApp) {
             setup_chrome(ctx, &notedeck.args(), notedeck.theme());
 
             let context = &mut notedeck.app_context();
-            let dave = Dave::new(cc.wgpu_render_state.as_ref());
             let columns = Damus::new(context, &app_args);
+            let dave = Dave::new(cc.wgpu_render_state.as_ref(), columns.note_options);
             let mut chrome = Chrome::new();
 
             // ensure we recognized all the arguments

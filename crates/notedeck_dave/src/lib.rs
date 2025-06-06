@@ -44,6 +44,7 @@ pub struct Dave {
     incoming_tokens: Option<Receiver<DaveApiResponse>>,
     model_config: ModelConfig,
     jobs: JobsCache,
+    note_options: notedeck::NoteOptions,
 }
 
 /// Calculate an anonymous user_id from a keypair
@@ -88,7 +89,7 @@ You are an AI agent for the nostr protocol called Dave, created by Damus. nostr 
         ))
     }
 
-    pub fn new(render_state: Option<&RenderState>) -> Self {
+    pub fn new(render_state: Option<&RenderState>, note_options: notedeck::NoteOptions) -> Self {
         let model_config = ModelConfig::default();
         //let model_config = ModelConfig::ollama();
         let client = Client::with_config(model_config.to_api());
@@ -109,6 +110,7 @@ You are an AI agent for the nostr protocol called Dave, created by Damus. nostr 
             model_config,
             chat: vec![],
             jobs: JobsCache::default(),
+            note_options,
         }
     }
 
@@ -180,11 +182,13 @@ You are an AI agent for the nostr protocol called Dave, created by Damus. nostr 
     }
 
     fn ui(&mut self, app_ctx: &mut AppContext, ui: &mut egui::Ui) -> DaveResponse {
-        DaveUi::new(self.model_config.trial, &self.chat, &mut self.input).ui(
-            app_ctx,
-            &mut self.jobs,
-            ui,
+        DaveUi::new(
+            self.model_config.trial,
+            &self.chat,
+            &mut self.input,
+            self.note_options,
         )
+        .ui(app_ctx, &mut self.jobs, ui)
     }
 
     fn handle_new_chat(&mut self) {

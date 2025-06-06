@@ -434,10 +434,13 @@ impl Damus {
 
         let debug = ctx.args.debug;
         let support = Support::new(ctx.path);
-        let mut note_options = NoteOptions::default();
+        let mut note_options =
+            storage::load_note_options(ctx.path).unwrap_or_else(NoteOptions::default);
         note_options.set_textmode(parsed_args.textmode);
         note_options.set_scramble_text(parsed_args.scramble);
-        note_options.set_hide_media(parsed_args.no_media);
+        if parsed_args.no_media {
+            note_options.set_hide_media(true);
+        }
 
         let jobs = JobsCache::default();
 
@@ -615,24 +618,33 @@ fn timelines_view(
 
     StripBuilder::new(ui)
         .size(Size::exact(ui::side_panel::SIDE_PANEL_WIDTH))
+        //.split_to_rows(Size::remainder(), num_cols)
         .sizes(sizes, num_cols)
         .clip(true)
         .horizontal(|mut strip| {
             strip.cell(|ui| {
                 let rect = ui.available_rect_before_wrap();
-                let side_panel =
-                    DesktopSidePanel::new(ctx.accounts.get_selected_account(), &app.decks_cache)
-                        .show(ui);
+                let side_panel_output = DesktopSidePanel::new(
+                    ctx.accounts.get_selected_account(),
+                    &app.decks_cache,
+                    app.note_options,
+                )
+                .show(ui);
 
-                if let Some(side_panel) = side_panel {
-                    if side_panel.response.clicked() || side_panel.response.secondary_clicked() {
+                if let Some(output) = &side_panel_output {
+                    if output.response.clicked() || output.response.secondary_clicked() {
                         if let Some(action) = DesktopSidePanel::perform_action(
                             &mut app.decks_cache,
                             ctx.accounts,
-                            side_panel.action,
+                            output.action,
                         ) {
                             side_panel_action = Some(action);
                         }
+                    }
+                     if let Some(new_state) = output.toggled_hide_media {
+                        app.note_options.set_hide_media(new_state);
+                        storage::save_note_options(ctx.path, &app.note_options);
+                        save_cols = true;
                     }
                 }
 

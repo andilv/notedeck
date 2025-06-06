@@ -12,7 +12,7 @@ use crate::{
 use notedeck::{Accounts, UserAccount};
 use notedeck_ui::{
     anim::{AnimationHelper, ICON_EXPANSION_MULTIPLE},
-    colors, View,
+    colors, View, NoteOptions,
 };
 
 use super::configure_deck::deck_icon;
@@ -23,6 +23,7 @@ static ICON_WIDTH: f32 = 40.0;
 pub struct DesktopSidePanel<'a> {
     selected_account: Option<&'a UserAccount>,
     decks_cache: &'a DecksCache,
+    note_options: NoteOptions,
 }
 
 impl View for DesktopSidePanel<'_> {
@@ -46,19 +47,25 @@ pub enum SidePanelAction {
 pub struct SidePanelResponse {
     pub response: egui::Response,
     pub action: SidePanelAction,
+    pub toggled_hide_media: Option<bool>,
 }
 
 impl SidePanelResponse {
-    fn new(action: SidePanelAction, response: egui::Response) -> Self {
-        SidePanelResponse { action, response }
+    fn new(action: SidePanelAction, response: egui::Response, toggled_hide_media: Option<bool>) -> Self {
+        SidePanelResponse {
+            action,
+            response,
+            toggled_hide_media,
+        }
     }
 }
 
 impl<'a> DesktopSidePanel<'a> {
-    pub fn new(selected_account: Option<&'a UserAccount>, decks_cache: &'a DecksCache) -> Self {
+    pub fn new(selected_account: Option<&'a UserAccount>, decks_cache: &'a DecksCache, note_options: NoteOptions) -> Self {
         Self {
             selected_account,
             decks_cache,
+            note_options,
         }
     }
 
@@ -82,6 +89,7 @@ impl<'a> DesktopSidePanel<'a> {
 
     fn show_inner(&mut self, ui: &mut egui::Ui) -> Option<SidePanelResponse> {
         let dark_mode = ui.ctx().style().visuals.dark_mode;
+        let mut toggled_hide_media: Option<bool> = None;
 
         let inner = ui
             .vertical(|ui| {
@@ -124,6 +132,12 @@ impl<'a> DesktopSidePanel<'a> {
                             show_decks(ui, self.decks_cache, self.selected_account)
                         })
                         .inner;
+
+                    ui.add_space(10.0);
+                    let mut load_media = !self.note_options.has_hide_media();
+                    if ui.checkbox(&mut load_media, "Load Media").clicked() {
+                        toggled_hide_media = Some(!load_media);
+                    }
 
                     /*
                     if expand_resp.clicked() {
@@ -171,7 +185,11 @@ impl<'a> DesktopSidePanel<'a> {
             .inner;
 
         if let Some(inner) = inner {
-            Some(SidePanelResponse::new(inner.inner, inner.response))
+            Some(SidePanelResponse::new(
+                inner.inner,
+                inner.response,
+                toggled_hide_media,
+            ))
         } else {
             None
         }

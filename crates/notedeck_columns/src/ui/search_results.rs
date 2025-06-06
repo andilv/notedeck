@@ -16,6 +16,7 @@ pub struct SearchResultsView<'a> {
     txn: &'a Transaction,
     img_cache: &'a mut Images,
     results: &'a Vec<&'a [u8; 32]>,
+    note_options: notedeck::NoteOptions, // This remains NoteOptions, as it's the type
 }
 
 pub enum SearchResultsResponse {
@@ -29,12 +30,14 @@ impl<'a> SearchResultsView<'a> {
         ndb: &'a Ndb,
         txn: &'a Transaction,
         results: &'a Vec<&'a [u8; 32]>,
+        note_options: notedeck::NoteOptions,
     ) -> Self {
         Self {
             ndb,
             txn,
             img_cache,
             results,
+            note_options,
         }
     }
 
@@ -51,7 +54,13 @@ impl<'a> SearchResultsView<'a> {
                 };
 
                 if ui
-                    .add(user_result(&profile, self.img_cache, i, width))
+                    .add(user_result(
+                        &profile,
+                        self.img_cache,
+                        i,
+                        width,
+                        self.note_options,
+                    ))
                     .clicked()
                 {
                     search_results_selection = Some(i)
@@ -121,6 +130,7 @@ fn user_result<'a>(
     cache: &'a mut Images,
     index: usize,
     width: f32,
+    note_options: notedeck::NoteOptions,
 ) -> impl egui::Widget + 'a {
     move |ui: &mut egui::Ui| -> egui::Response {
         let min_img_size = 48.0;
@@ -140,7 +150,7 @@ fn user_result<'a>(
 
         let pfp_resp = ui.put(
             icon_rect,
-            &mut ProfilePic::new(cache, get_profile_url(Some(profile)))
+            &mut ProfilePic::new(cache, get_profile_url(Some(profile)), note_options)
                 .size(helper.scale_1d_pos(min_img_size)),
         );
 

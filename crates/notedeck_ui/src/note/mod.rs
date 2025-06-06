@@ -265,7 +265,8 @@ impl<'a, 'd> NoteView<'a, 'd> {
                     anim_speed,
                 );
 
-                let mut pfp = ProfilePic::new(self.note_context.img_cache, pic).size(size);
+                let mut pfp =
+                    ProfilePic::new(self.note_context.img_cache, pic, self.flags).size(size);
                 let pfp_resp = ui.put(rect, &mut pfp);
 
                 action = action.or(pfp.action);
@@ -279,6 +280,7 @@ impl<'a, 'd> NoteView<'a, 'd> {
                     ui.add(ProfilePreview::new(
                         profile.as_ref().unwrap(),
                         self.note_context.img_cache,
+                        self.flags,
                     ));
                 });
 
@@ -291,9 +293,12 @@ impl<'a, 'd> NoteView<'a, 'd> {
                 let size = (pfp_size + NoteView::expand_size()) as f32;
                 let (rect, _response) = ui.allocate_exact_size(egui::vec2(size, size), sense);
 
-                let mut pfp =
-                    ProfilePic::new(self.note_context.img_cache, notedeck::profile::no_pfp_url())
-                        .size(pfp_size as f32);
+                let mut pfp = ProfilePic::new(
+                    self.note_context.img_cache,
+                    notedeck::profile::no_pfp_url(),
+                    self.flags,
+                )
+                .size(pfp_size as f32);
                 let resp = ui.put(rect, &mut pfp).interact(sense);
                 action = action.or(pfp.action);
 

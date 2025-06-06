@@ -11,15 +11,21 @@ pub struct ProfilePreview<'a, 'cache> {
     profile: &'a ProfileRecord<'a>,
     cache: &'cache mut Images,
     banner_height: Size,
+    note_options: notedeck::NoteOptions,
 }
 
 impl<'a, 'cache> ProfilePreview<'a, 'cache> {
-    pub fn new(profile: &'a ProfileRecord<'a>, cache: &'cache mut Images) -> Self {
+    pub fn new(
+        profile: &'a ProfileRecord<'a>,
+        cache: &'cache mut Images,
+        note_options: notedeck::NoteOptions,
+    ) -> Self {
         let banner_height = Size::exact(80.0);
         ProfilePreview {
             profile,
             cache,
             banner_height,
+            note_options,
         }
     }
 
@@ -38,9 +44,13 @@ impl<'a, 'cache> ProfilePreview<'a, 'cache> {
 
             ui.put(
                 pfp_rect,
-                &mut ProfilePic::new(self.cache, get_profile_url(Some(self.profile)))
-                    .size(size)
-                    .border(ProfilePic::border_stroke(ui)),
+                &mut ProfilePic::new(
+                    self.cache,
+                    get_profile_url(Some(self.profile)),
+                    self.note_options,
+                )
+                .size(size)
+                .border(ProfilePic::border_stroke(ui)),
             );
             ui.add(display_name_widget(
                 &get_display_name(Some(self.profile)),
@@ -70,6 +80,7 @@ pub struct SimpleProfilePreview<'a, 'cache> {
     profile: Option<&'a ProfileRecord<'a>>,
     cache: &'cache mut Images,
     is_nsec: bool,
+    note_options: notedeck::NoteOptions,
 }
 
 impl<'a, 'cache> SimpleProfilePreview<'a, 'cache> {
@@ -77,11 +88,13 @@ impl<'a, 'cache> SimpleProfilePreview<'a, 'cache> {
         profile: Option<&'a ProfileRecord<'a>>,
         cache: &'cache mut Images,
         is_nsec: bool,
+        note_options: notedeck::NoteOptions,
     ) -> Self {
         SimpleProfilePreview {
             profile,
             cache,
             is_nsec,
+            note_options,
         }
     }
 }
@@ -90,7 +103,14 @@ impl egui::Widget for SimpleProfilePreview<'_, '_> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
         Frame::new()
             .show(ui, |ui| {
-                ui.add(&mut ProfilePic::new(self.cache, get_profile_url(self.profile)).size(48.0));
+                ui.add(
+                    &mut ProfilePic::new(
+                        self.cache,
+                        get_profile_url(self.profile),
+                        self.note_options,
+                    )
+                    .size(48.0),
+                );
                 ui.vertical(|ui| {
                     ui.add(display_name_widget(&get_display_name(self.profile), true));
                     if !self.is_nsec {

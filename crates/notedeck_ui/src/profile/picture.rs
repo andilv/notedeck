@@ -12,11 +12,20 @@ pub struct ProfilePic<'cache, 'url> {
     sense: Sense,
     border: Option<Stroke>,
     pub action: Option<MediaAction>,
+    note_options: notedeck::NoteOptions,
 }
 
 impl egui::Widget for &mut ProfilePic<'_, '_> {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
-        let inner = render_pfp(ui, self.cache, self.url, self.size, self.border, self.sense);
+        let inner = render_pfp(
+            ui,
+            self.cache,
+            self.url,
+            self.size,
+            self.border,
+            self.sense,
+            self.note_options,
+        );
 
         self.action = inner.inner;
 
@@ -25,7 +34,11 @@ impl egui::Widget for &mut ProfilePic<'_, '_> {
 }
 
 impl<'cache, 'url> ProfilePic<'cache, 'url> {
-    pub fn new(cache: &'cache mut Images, url: &'url str) -> Self {
+    pub fn new(
+        cache: &'cache mut Images,
+        url: &'url str,
+        note_options: notedeck::NoteOptions,
+    ) -> Self {
         let size = Self::default_size() as f32;
         let sense = Sense::hover();
 
@@ -36,6 +49,7 @@ impl<'cache, 'url> ProfilePic<'cache, 'url> {
             size,
             border: None,
             action: None,
+            note_options,
         }
     }
 
@@ -51,17 +65,19 @@ impl<'cache, 'url> ProfilePic<'cache, 'url> {
     pub fn from_profile(
         cache: &'cache mut Images,
         profile: &nostrdb::ProfileRecord<'url>,
+        note_options: notedeck::NoteOptions,
     ) -> Option<Self> {
         profile
             .record()
             .profile()
             .and_then(|p| p.picture())
-            .map(|url| ProfilePic::new(cache, url))
+            .map(|url| ProfilePic::new(cache, url, note_options))
     }
 
     pub fn from_profile_or_default(
         cache: &'cache mut Images,
         profile: Option<&nostrdb::ProfileRecord<'url>>,
+        note_options: notedeck::NoteOptions,
     ) -> Self {
         let url = profile
             .map(|p| p.record())
@@ -69,7 +85,7 @@ impl<'cache, 'url> ProfilePic<'cache, 'url> {
             .and_then(|p| p.picture())
             .unwrap_or(notedeck::profile::no_pfp_url());
 
-        ProfilePic::new(cache, url)
+        ProfilePic::new(cache, url, note_options)
     }
 
     #[inline]
@@ -108,18 +124,25 @@ fn render_pfp(
     ui_size: f32,
     border: Option<Stroke>,
     sense: Sense,
+    note_options: notedeck::NoteOptions,
 ) -> InnerResponse<Option<MediaAction>> {
     // We will want to downsample these so it's not blurry on hi res displays
     let img_size = 128u32;
 
-    let cache_type = supported_mime_hosted_at_url(&mut img_cache.urls, url)
+    let final_url = if note_options.has_hide_media() {
+        notedeck::profile::no_pfp_url()
+    } else {
+        url
+    };
+
+    let cache_type = supported_mime_hosted_at_url(&mut img_cache.urls, final_url)
         .unwrap_or(notedeck::MediaCacheType::Image);
 
     let cur_state = get_render_state(
         ui.ctx(),
         img_cache,
         cache_type,
-        url,
+        final_url,
         ImageType::Profile(img_size),
     );
 
@@ -129,10 +152,10 @@ fn render_pfp(
         }
         notedeck::TextureState::Error(e) => {
             let r = paint_circle(ui, ui_size, border, sense);
-            show_one_error_message(ui, &format!("Failed to fetch profile at url {url}: {e}"));
+            show_one_error_message(ui, &format!("Failed to fetch profile at url {final_url}: {e}"));
             egui::InnerResponse::new(
                 Some(MediaAction::FetchImage {
-                    url: url.to_owned(),
+                    url: final_url.to_owned(),
                     cache_type,
                     no_pfp_promise: fetch_no_pfp_promise(ui.ctx(), img_cache.get_cache(cache_type)),
                 }),
@@ -142,7 +165,7 @@ fn render_pfp(
         notedeck::TextureState::Loaded(textured_image) => {
             let texture_handle = handle_repaint(
                 ui,
-                retrieve_latest_texture(url, cur_state.gifs, textured_image),
+                retrieve_latest_texture(final_url, cur_state.gifs, textured_image),
             );
 
             egui::InnerResponse::new(None, pfp_image(ui, texture_handle, ui_size, border, sense))

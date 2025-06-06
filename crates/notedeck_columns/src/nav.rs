@@ -424,6 +424,7 @@ fn render_nav_body(
                 &mut app.decks_cache,
                 &mut app.view_state.login,
                 *amr,
+                app.note_options,
             );
             let txn = Transaction::new(ctx.ndb).expect("txn");
             action.process_action(ctx.unknown_ids, ctx.ndb, &txn);

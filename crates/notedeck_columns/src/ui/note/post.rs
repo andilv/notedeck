@@ -138,15 +138,26 @@ impl<'a, 'd> PostView<'a, 'd> {
             .as_ref()
             .ok()
             .and_then(|p| {
-                Some(ProfilePic::from_profile(self.note_context.img_cache, p)?.size(pfp_size))
+                Some(
+                    ProfilePic::from_profile(
+                        self.note_context.img_cache,
+                        p,
+                        self.note_options,
+                    )?
+                    .size(pfp_size),
+                )
             });
 
         if let Some(mut pfp) = poster_pfp {
             ui.add(&mut pfp);
         } else {
             ui.add(
-                &mut ProfilePic::new(self.note_context.img_cache, notedeck::profile::no_pfp_url())
-                    .size(pfp_size),
+                &mut ProfilePic::new(
+                    self.note_context.img_cache,
+                    notedeck::profile::no_pfp_url(),
+                    self.note_options,
+                )
+                .size(pfp_size),
             );
         }
 
@@ -259,6 +270,7 @@ impl<'a, 'd> PostView<'a, 'd> {
             self.note_context.ndb,
             txn,
             &res,
+            self.note_options,
         )
         .show_in_rect(hint_rect, ui);
 

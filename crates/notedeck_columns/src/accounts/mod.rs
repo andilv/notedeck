@@ -32,9 +32,10 @@ pub fn render_accounts_route(
     decks: &mut DecksCache,
     login_state: &mut AcquireKeyState,
     route: AccountsRoute,
+    note_options: notedeck::NoteOptions,
 ) -> AddAccountAction {
     let resp = match route {
-        AccountsRoute::Accounts => AccountsView::new(ndb, accounts, img_cache)
+        AccountsRoute::Accounts => AccountsView::new(ndb, accounts, img_cache, note_options)
             .ui(ui)
             .inner
             .map(AccountsRouteResponse::Accounts),

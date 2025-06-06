@@ -83,7 +83,7 @@ async fn main() {
 
             let mut chrome = Chrome::new();
             let columns = Damus::new(&mut notedeck.app_context(), &args);
-            let dave = Dave::new(cc.wgpu_render_state.as_ref());
+            let dave = Dave::new(cc.wgpu_render_state.as_ref(), columns.note_options);
 
             setup_chrome(ctx, notedeck.args(), notedeck.theme());
 

@@ -11,6 +11,7 @@ pub struct AccountsView<'a> {
     ndb: &'a Ndb,
     accounts: &'a Accounts,
     img_cache: &'a mut Images,
+    note_options: notedeck::NoteOptions,
 }
 
 #[derive(Clone, Debug)]
@@ -27,11 +28,17 @@ enum ProfilePreviewAction {
 }
 
 impl<'a> AccountsView<'a> {
-    pub fn new(ndb: &'a Ndb, accounts: &'a Accounts, img_cache: &'a mut Images) -> Self {
+    pub fn new(
+        ndb: &'a Ndb,
+        accounts: &'a Accounts,
+        img_cache: &'a mut Images,
+        note_options: notedeck::NoteOptions,
+    ) -> Self {
         AccountsView {
             ndb,
             accounts,
             img_cache,
+            note_options,
         }
     }
 
@@ -85,8 +92,12 @@ impl<'a> AccountsView<'a> {
                         let max_size = egui::vec2(ui.available_width(), 77.0);
                         let resp = ui.allocate_response(max_size, egui::Sense::click());
                         ui.allocate_new_ui(UiBuilder::new().max_rect(resp.rect), |ui| {
-                            let preview =
-                                SimpleProfilePreview::new(profile.as_ref(), img_cache, has_nsec);
+                            let preview = SimpleProfilePreview::new(
+                                profile.as_ref(),
+                                img_cache,
+                                has_nsec,
+                                self.note_options,
+                            );
                             show_profile_card(ui, preview, max_size, is_selected, resp)
                         })
                         .inner
