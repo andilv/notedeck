@@ -11,6 +11,7 @@ nostrdb = { workspace = true }
 tracing = { workspace = true }
 poll-promise = { workspace = true }
 profiling = { workspace = true }
+serde = { version = "1.0", features = ["derive"] }
 tokio = { workspace = true }
 notedeck = { workspace = true }
 image = { workspace = true }
