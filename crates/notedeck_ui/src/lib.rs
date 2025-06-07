@@ -56,3 +56,5 @@ pub fn hline(ui: &egui::Ui) {
 pub fn show_pointer(ui: &egui::Ui) {
     ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
 }
+
+pub use note::options::NoteOptions;
