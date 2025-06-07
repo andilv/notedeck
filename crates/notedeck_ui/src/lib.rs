@@ -15,7 +15,7 @@ pub mod widgets;
 
 pub use anim::{AnimationHelper, PulseAlpha};
 pub use mention::Mention;
-pub use note::{NoteContents, NoteOptions, NoteView};
+pub use note::{NoteContents, NoteView};
 pub use profile::{ProfilePic, ProfilePreview};
 pub use username::Username;
 

@@ -612,6 +612,7 @@ fn timelines_view(
     app: &mut Damus,
     ctx: &mut AppContext<'_>,
 ) -> Option<AppAction> {
+    let mut save_cols = false;
     let num_cols = get_active_columns(ctx.accounts, &app.decks_cache).num_columns();
     let mut side_panel_action: Option<nav::SwitchingAction> = None;
     let mut responses = Vec::with_capacity(num_cols);
@@ -694,7 +695,6 @@ fn timelines_view(
 
     // process the side panel action after so we don't change the number of columns during
     // StripBuilder rendering
-    let mut save_cols = false;
     if let Some(action) = side_panel_action {
         save_cols = save_cols || action.process(&mut app.timeline_cache, &mut app.decks_cache, ctx);
     }

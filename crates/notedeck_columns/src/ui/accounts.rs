@@ -4,14 +4,14 @@ use egui::{
 use nostrdb::{Ndb, Transaction};
 use notedeck::{Accounts, Images};
 use notedeck_ui::colors::PINK;
-
+use notedeck_ui::note::options::NoteOptions;
 use notedeck_ui::profile::preview::SimpleProfilePreview;
 
 pub struct AccountsView<'a> {
     ndb: &'a Ndb,
     accounts: &'a Accounts,
     img_cache: &'a mut Images,
-    note_options: notedeck::NoteOptions,
+    note_options: NoteOptions,
 }
 
 #[derive(Clone, Debug)]
@@ -32,7 +32,7 @@ impl<'a> AccountsView<'a> {
         ndb: &'a Ndb,
         accounts: &'a Accounts,
         img_cache: &'a mut Images,
-        note_options: notedeck::NoteOptions,
+        note_options: NoteOptions,
     ) -> Self {
         AccountsView {
             ndb,
@@ -96,7 +96,7 @@ impl<'a> AccountsView<'a> {
                                 profile.as_ref(),
                                 img_cache,
                                 has_nsec,
-                                self.note_options,
+                                self.note_options.clone(),
                             );
                             show_profile_card(ui, preview, max_size, is_selected, resp)
                         })

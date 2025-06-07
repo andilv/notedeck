@@ -1,5 +1,6 @@
 use enostr::FullKeypair;
 use nostrdb::Ndb;
+use notedeck_ui::note::options::NoteOptions;
 
 use notedeck::{
     Accounts, AccountsAction, AddAccountAction, Images, SingleUnkIdAction, SwitchAccountAction,
@@ -32,7 +33,7 @@ pub fn render_accounts_route(
     decks: &mut DecksCache,
     login_state: &mut AcquireKeyState,
     route: AccountsRoute,
-    note_options: notedeck::NoteOptions,
+    note_options: NoteOptions,
 ) -> AddAccountAction {
     let resp = match route {
         AccountsRoute::Accounts => AccountsView::new(ndb, accounts, img_cache, note_options)

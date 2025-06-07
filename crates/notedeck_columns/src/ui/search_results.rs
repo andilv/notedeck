@@ -9,6 +9,7 @@ use notedeck_ui::{
     widgets::x_button,
     ProfilePic,
 };
+use notedeck_ui::note::options::NoteOptions;
 use tracing::error;
 
 pub struct SearchResultsView<'a> {
@@ -16,7 +17,7 @@ pub struct SearchResultsView<'a> {
     txn: &'a Transaction,
     img_cache: &'a mut Images,
     results: &'a Vec<&'a [u8; 32]>,
-    note_options: notedeck::NoteOptions, // This remains NoteOptions, as it's the type
+    note_options: NoteOptions, // This remains NoteOptions, as it's the type
 }
 
 pub enum SearchResultsResponse {
@@ -30,7 +31,7 @@ impl<'a> SearchResultsView<'a> {
         ndb: &'a Ndb,
         txn: &'a Transaction,
         results: &'a Vec<&'a [u8; 32]>,
-        note_options: notedeck::NoteOptions,
+        note_options: NoteOptions,
     ) -> Self {
         Self {
             ndb,
@@ -59,7 +60,7 @@ impl<'a> SearchResultsView<'a> {
                         self.img_cache,
                         i,
                         width,
-                        self.note_options,
+                        self.note_options.clone(),
                     ))
                     .clicked()
                 {
@@ -130,7 +131,7 @@ fn user_result<'a>(
     cache: &'a mut Images,
     index: usize,
     width: f32,
-    note_options: notedeck::NoteOptions,
+    note_options: NoteOptions,
 ) -> impl egui::Widget + 'a {
     move |ui: &mut egui::Ui| -> egui::Response {
         let min_img_size = 48.0;

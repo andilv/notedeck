@@ -5,14 +5,15 @@ use crate::{
 use egui::{Align, Key, KeyboardShortcut, Layout, Modifiers};
 use nostrdb::{Ndb, Transaction};
 use notedeck::{Accounts, AppContext, Images, NoteAction, NoteContext};
-use notedeck_ui::{icons::search_icon, jobs::JobsCache, NoteOptions, ProfilePic};
+use notedeck_ui::{icons::search_icon, jobs::JobsCache, ProfilePic};
+use notedeck_ui::note::options::NoteOptions;
 
 /// DaveUi holds all of the data it needs to render itself
 pub struct DaveUi<'a> {
     chat: &'a [Message],
     trial: bool,
     input: &'a mut String,
-    note_options: notedeck::NoteOptions,
+    note_options: NoteOptions,
 }
 
 /// The response the app generates. The response contains an optional
@@ -66,7 +67,7 @@ impl<'a> DaveUi<'a> {
         trial: bool,
         chat: &'a [Message],
         input: &'a mut String,
-        note_options: notedeck::NoteOptions,
+        note_options: NoteOptions,
     ) -> Self {
         DaveUi {
             trial,
@@ -101,7 +102,7 @@ impl<'a> DaveUi<'a> {
         jobs: &mut JobsCache,
         ui: &mut egui::Ui,
     ) -> DaveResponse {
-        let action = top_buttons_ui(app_ctx, ui, self.note_options);
+        let action = top_buttons_ui(app_ctx, ui, self.note_options.clone());
 
         egui::Frame::NONE
             .show(ui, |ui| {
@@ -464,49 +465,10 @@ fn pill_label_ui(name: &str, mut value: impl FnMut(&mut egui::Ui), ui: &mut egui
         });
 }
 
-fn top_buttons_ui(app_ctx: &mut AppContext, ui: &mut egui::Ui) -> Option<DaveAction> {
-    // Scroll area for chat messages
-    let mut action: Option<DaveAction> = None;
-    let mut rect = ui.available_rect_before_wrap();
-    rect = rect.translate(egui::vec2(20.0, 20.0));
-    rect.set_height(32.0);
-    rect.set_width(32.0);
-
-    let txn = Transaction::new(app_ctx.ndb).unwrap();
-    let r = ui.put(
-        rect,
-        &mut pfp_button(
-            &txn,
-            app_ctx.accounts,
-            app_ctx.img_cache,
-            app_ctx.ndb,
-            // TODO: Get NoteOptions from somewhere
-            notedeck::NoteOptions::default(),
-        ),
-    );
-
-    if r.clicked() {
-        action = Some(DaveAction::ToggleChrome);
-    } else if r.hovered() {
-        notedeck_ui::show_pointer(ui);
-    }
-
-    rect = rect.translate(egui::vec2(30.0, 0.0));
-    let r = ui.put(rect, new_chat_button());
-
-    if r.clicked() {
-        action = Some(DaveAction::NewChat);
-    } else if r.hovered() {
-        notedeck_ui::show_pointer(ui);
-    }
-
-    action
-}
-
 fn top_buttons_ui(
     app_ctx: &mut AppContext,
     ui: &mut egui::Ui,
-    note_options: notedeck::NoteOptions,
+    note_options: NoteOptions,
 ) -> Option<DaveAction> {
     // Scroll area for chat messages
     let mut action: Option<DaveAction> = None;
@@ -550,7 +512,7 @@ fn pfp_button<'me, 'a>(
     accounts: &Accounts,
     img_cache: &'me mut Images,
     ndb: &Ndb,
-    note_options: notedeck::NoteOptions,
+    note_options: NoteOptions,
 ) -> ProfilePic<'me, 'a> {
     let account = accounts.get_selected_account();
     let profile = account.and_then(|a| ndb.get_profile_by_pubkey(txn, a.key.pubkey.bytes()).ok());

@@ -10,6 +10,7 @@ use futures::StreamExt;
 use nostrdb::Transaction;
 use notedeck::{AppAction, AppContext};
 use notedeck_ui::jobs::JobsCache;
+use notedeck_ui::note::options::NoteOptions;
 use std::collections::HashMap;
 use std::string::ToString;
 use std::sync::mpsc::{self, Receiver};
@@ -44,7 +45,7 @@ pub struct Dave {
     incoming_tokens: Option<Receiver<DaveApiResponse>>,
     model_config: ModelConfig,
     jobs: JobsCache,
-    note_options: notedeck::NoteOptions,
+    note_options: NoteOptions,
 }
 
 /// Calculate an anonymous user_id from a keypair
@@ -89,7 +90,7 @@ You are an AI agent for the nostr protocol called Dave, created by Damus. nostr 
         ))
     }
 
-    pub fn new(render_state: Option<&RenderState>, note_options: notedeck::NoteOptions) -> Self {
+    pub fn new(render_state: Option<&RenderState>, note_options: NoteOptions) -> Self {
         let model_config = ModelConfig::default();
         //let model_config = ModelConfig::ollama();
         let client = Client::with_config(model_config.to_api());
@@ -186,7 +187,7 @@ You are an AI agent for the nostr protocol called Dave, created by Damus. nostr 
             self.model_config.trial,
             &self.chat,
             &mut self.input,
-            self.note_options,
+            self.note_options.clone(),
         )
         .ui(app_ctx, &mut self.jobs, ui)
     }
