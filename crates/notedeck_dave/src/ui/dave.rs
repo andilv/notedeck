@@ -517,7 +517,7 @@ fn pfp_button<'me, 'a>(
     let account = accounts.get_selected_account();
     let profile = account.and_then(|a| ndb.get_profile_by_pubkey(txn, a.key.pubkey.bytes()).ok());
 
-    ProfilePic::from_profile_or_default(img_cache, profile.as_ref(), note_options)
+    ProfilePic::from_profile_or_default(img_cache, profile.as_ref(), note_options.clone())
         .size(24.0)
         .sense(egui::Sense::click())
 }
