@@ -11,7 +11,7 @@ use notedeck::{
 };
 use notedeck_columns::Damus;
 use notedeck_dave::{Dave, DaveAvatar};
-use notedeck_ui::{AnimationHelper, ProfilePic};
+use notedeck_ui::{AnimationHelper, ProfilePic, NoteOptions};
 
 static ICON_WIDTH: f32 = 40.0;
 pub static ICON_EXPANSION_MULTIPLE: f32 = 1.2;
@@ -292,7 +292,7 @@ impl Chrome {
         let txn = Transaction::new(ctx.ndb).expect("should be able to create txn");
         let profile_url = get_account_url(&txn, ctx.ndb, ctx.accounts.get_selected_account());
 
-        let mut widget = ProfilePic::new(ctx.img_cache, profile_url).size(cur_pfp_size);
+        let mut widget = ProfilePic::new(ctx.img_cache, profile_url, NoteOptions::default()).size(cur_pfp_size);
 
         ui.put(helper.get_animation_rect(), &mut widget);
 
