@@ -51,7 +51,7 @@ impl<'a> AccountsView<'a> {
             ui.add_space(8.0);
             scroll_area()
                 .show(ui, |ui| {
-                    Self::show_accounts(ui, self.accounts, self.ndb, self.img_cache)
+                    Self::show_accounts(ui, self.accounts, self.ndb, self.img_cache, &self.note_options)
                 })
                 .inner
         })
@@ -62,6 +62,7 @@ impl<'a> AccountsView<'a> {
         accounts: &Accounts,
         ndb: &Ndb,
         img_cache: &mut Images,
+        note_options: &NoteOptions,
     ) -> Option<AccountsViewResponse> {
         let mut return_op: Option<AccountsViewResponse> = None;
         ui.allocate_ui_with_layout(
@@ -96,7 +97,7 @@ impl<'a> AccountsView<'a> {
                                 profile.as_ref(),
                                 img_cache,
                                 has_nsec,
-                                self.note_options.clone(),
+                                note_options.clone(),
                             );
                             show_profile_card(ui, preview, max_size, is_selected, resp)
                         })

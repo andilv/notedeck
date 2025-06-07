@@ -16,6 +16,7 @@ use notedeck_ui::{
     anim::{AnimationHelper, ICON_EXPANSION_MULTIPLE},
     ProfilePic,
 };
+use notedeck_ui::note::options::NoteOptions;
 
 pub struct NavTitle<'a> {
     ndb: &'a Ndb,
@@ -399,7 +400,7 @@ impl<'a> NavTitle<'a> {
             .ok()
             .and_then(move |p| {
                 Some(
-                    ProfilePic::from_profile(self.img_cache, p)?
+                    ProfilePic::from_profile(self.img_cache, p, NoteOptions::default())?
                         .size(pfp_size)
                         .sense(Sense::click()),
                 )
@@ -416,7 +417,7 @@ impl<'a> NavTitle<'a> {
             ui.add(&mut pfp)
         } else {
             ui.add(
-                &mut ProfilePic::new(self.img_cache, notedeck::profile::no_pfp_url())
+                &mut ProfilePic::new(self.img_cache, notedeck::profile::no_pfp_url(), NoteOptions::default())
                     .size(pfp_size)
                     .sense(Sense::click()),
             )
@@ -481,7 +482,7 @@ impl<'a> NavTitle<'a> {
             ui.add(&mut pfp)
         } else {
             ui.add(
-                &mut ProfilePic::new(self.img_cache, notedeck::profile::no_pfp_url())
+                &mut ProfilePic::new(self.img_cache, notedeck::profile::no_pfp_url(), NoteOptions::default())
                     .size(pfp_size)
                     .sense(Sense::click()),
             )

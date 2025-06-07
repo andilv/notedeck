@@ -22,6 +22,7 @@ use tokenator::{ParseError, TokenParser, TokenSerializable, TokenWriter};
 
 use crate::ui::widgets::styled_button;
 use notedeck_ui::{anim::AnimationHelper, padding, ProfilePreview};
+use notedeck_ui::note::options::NoteOptions;
 
 pub enum AddColumnResponse {
     Timeline(TimelineKind),
@@ -322,7 +323,7 @@ impl<'a> AddColumnView<'a> {
                                 bottom: 32,
                             })
                             .show(ui, |ui| {
-                                ProfilePreview::new(&profile, self.img_cache).ui(ui);
+                                ProfilePreview::new(&profile, self.img_cache, NoteOptions::default()).ui(ui);
                             });
                     }
                 }

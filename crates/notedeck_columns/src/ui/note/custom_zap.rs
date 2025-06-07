@@ -10,6 +10,7 @@ use notedeck::{
     fonts::get_font_size, get_profile_url, name::get_display_name, Images, NotedeckTextStyle,
 };
 use notedeck_ui::{colors, profile::display_name_widget, AnimationHelper, ProfilePic};
+use notedeck_ui::note::options::NoteOptions;
 
 use crate::ui::widgets::styled_button_toggleable;
 
@@ -170,7 +171,7 @@ fn show_profile(ui: &mut egui::Ui, images: &mut Images, profile: Option<&Profile
         vec2(ui.available_width(), max_size),
         Layout::left_to_right(egui::Align::Center).with_main_wrap(true),
         |ui| {
-            ui.add(&mut ProfilePic::new(images, get_profile_url(profile)).size(max_size));
+            ui.add(&mut ProfilePic::new(images, get_profile_url(profile), NoteOptions::default()).size(max_size));
             ui.add(display_name_widget(&get_display_name(profile), false));
         },
     );

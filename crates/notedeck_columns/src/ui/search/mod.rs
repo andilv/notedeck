@@ -85,6 +85,7 @@ impl<'a, 'd> SearchView<'a, 'd> {
                     self.note_context.ndb,
                     self.txn,
                     &results,
+                    self.note_options.clone(),
                 )
                 .show_in_rect(ui.available_rect_before_wrap(), ui);
 

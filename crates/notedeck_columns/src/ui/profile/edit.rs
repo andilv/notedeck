@@ -4,6 +4,7 @@ use crate::profile_state::ProfileState;
 use egui::{vec2, Button, CornerRadius, Layout, Margin, RichText, ScrollArea, TextEdit};
 use notedeck::{profile::unwrap_profile_url, Images, NotedeckTextStyle};
 use notedeck_ui::{profile::banner, ProfilePic};
+use notedeck_ui::note::options::NoteOptions;
 
 pub struct EditProfileView<'a> {
     state: &'a mut ProfileState,
@@ -60,7 +61,7 @@ impl<'a> EditProfileView<'a> {
         });
         ui.put(
             pfp_rect,
-            &mut ProfilePic::new(self.img_cache, pfp_url)
+            &mut ProfilePic::new(self.img_cache, pfp_url, NoteOptions::default())
                 .size(size)
                 .border(ProfilePic::border_stroke(ui)),
         );

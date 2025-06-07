@@ -159,6 +159,7 @@ impl<'a, 'd> ProfileView<'a, 'd> {
                         &mut ProfilePic::new(
                             self.note_context.img_cache,
                             get_profile_url(Some(&profile)),
+                            NoteOptions::default(),
                         )
                         .size(size)
                         .border(ProfilePic::border_stroke(ui)),
