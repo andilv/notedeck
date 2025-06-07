@@ -331,7 +331,11 @@ impl<'a, 'd> NoteView<'a, 'd> {
                 if let Ok(rec) = &profile {
                     resp.on_hover_ui_at_pointer(|ui| {
                         ui.set_max_width(300.0);
-                        ui.add(ProfilePreview::new(rec, self.note_context.img_cache));
+                        ui.add(ProfilePreview::new(
+                            rec,
+                            self.note_context.img_cache,
+                            self.flags,
+                        ));
                     });
                 }
                 let color = ui.style().visuals.noninteractive().fg_stroke.color;
