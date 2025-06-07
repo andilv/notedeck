@@ -280,7 +280,7 @@ impl<'a, 'd> NoteView<'a, 'd> {
                     ui.add(ProfilePreview::new(
                         profile.as_ref().unwrap(),
                         self.note_context.img_cache,
-                        self.flags,
+                        self.flags, // This should already be correct
                     ));
                 });
 

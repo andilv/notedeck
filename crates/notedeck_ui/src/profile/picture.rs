@@ -12,7 +12,7 @@ pub struct ProfilePic<'cache, 'url> {
     sense: Sense,
     border: Option<Stroke>,
     pub action: Option<MediaAction>,
-    note_options: notedeck::NoteOptions,
+    note_options: crate::note::options::NoteOptions,
 }
 
 impl egui::Widget for &mut ProfilePic<'_, '_> {
@@ -37,7 +37,7 @@ impl<'cache, 'url> ProfilePic<'cache, 'url> {
     pub fn new(
         cache: &'cache mut Images,
         url: &'url str,
-        note_options: notedeck::NoteOptions,
+        note_options: crate::note::options::NoteOptions,
     ) -> Self {
         let size = Self::default_size() as f32;
         let sense = Sense::hover();
@@ -65,7 +65,7 @@ impl<'cache, 'url> ProfilePic<'cache, 'url> {
     pub fn from_profile(
         cache: &'cache mut Images,
         profile: &nostrdb::ProfileRecord<'url>,
-        note_options: notedeck::NoteOptions,
+        note_options: crate::note::options::NoteOptions,
     ) -> Option<Self> {
         profile
             .record()
@@ -77,7 +77,7 @@ impl<'cache, 'url> ProfilePic<'cache, 'url> {
     pub fn from_profile_or_default(
         cache: &'cache mut Images,
         profile: Option<&nostrdb::ProfileRecord<'url>>,
-        note_options: notedeck::NoteOptions,
+        note_options: crate::note::options::NoteOptions,
     ) -> Self {
         let url = profile
             .map(|p| p.record())
@@ -124,7 +124,7 @@ fn render_pfp(
     ui_size: f32,
     border: Option<Stroke>,
     sense: Sense,
-    note_options: notedeck::NoteOptions,
+    note_options: crate::note::options::NoteOptions,
 ) -> InnerResponse<Option<MediaAction>> {
     // We will want to downsample these so it's not blurry on hi res displays
     let img_size = 128u32;

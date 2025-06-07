@@ -94,7 +94,12 @@ fn mention_ui(
     if let Some(rec) = profile.as_ref() {
         resp.on_hover_ui_at_pointer(|ui| {
             ui.set_max_width(300.0);
-            ui.add(ProfilePreview::new(rec, img_cache));
+            // TODO: Plumb actual NoteOptions here
+            ui.add(ProfilePreview::new(
+                rec,
+                img_cache,
+                crate::note::options::NoteOptions::default(),
+            ));
         });
     }
 

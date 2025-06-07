@@ -11,14 +11,14 @@ pub struct ProfilePreview<'a, 'cache> {
     profile: &'a ProfileRecord<'a>,
     cache: &'cache mut Images,
     banner_height: Size,
-    note_options: notedeck::NoteOptions,
+    note_options: crate::note::options::NoteOptions,
 }
 
 impl<'a, 'cache> ProfilePreview<'a, 'cache> {
     pub fn new(
         profile: &'a ProfileRecord<'a>,
         cache: &'cache mut Images,
-        note_options: notedeck::NoteOptions,
+        note_options: crate::note::options::NoteOptions,
     ) -> Self {
         let banner_height = Size::exact(80.0);
         ProfilePreview {
@@ -80,7 +80,7 @@ pub struct SimpleProfilePreview<'a, 'cache> {
     profile: Option<&'a ProfileRecord<'a>>,
     cache: &'cache mut Images,
     is_nsec: bool,
-    note_options: notedeck::NoteOptions,
+    note_options: crate::note::options::NoteOptions,
 }
 
 impl<'a, 'cache> SimpleProfilePreview<'a, 'cache> {
@@ -88,7 +88,7 @@ impl<'a, 'cache> SimpleProfilePreview<'a, 'cache> {
         profile: Option<&'a ProfileRecord<'a>>,
         cache: &'cache mut Images,
         is_nsec: bool,
-        note_options: notedeck::NoteOptions,
+        note_options: crate::note::options::NoteOptions,
     ) -> Self {
         SimpleProfilePreview {
             profile,

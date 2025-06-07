@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 bitflags! {
     // Attributes can be applied to flags types
     #[repr(transparent)]
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct NoteOptions: u64 {
         const actionbar       = 0b0000000000000001;
         const note_previews   = 0b0000000000000010;
