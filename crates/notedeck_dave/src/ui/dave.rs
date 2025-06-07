@@ -192,7 +192,7 @@ impl<'a> DaveUi<'a> {
                     // have a debug option to show this
                     None
                 }
-                Message::ToolCalls(toolcalls) => Self::tool_calls_ui(ctx, jobs, toolcalls, ui),
+                Message::ToolCalls(toolcalls) => Self::tool_calls_ui(ctx, jobs, toolcalls, ui, self.note_options.clone()),
             };
 
             if r.is_some() {
@@ -207,11 +207,11 @@ impl<'a> DaveUi<'a> {
         //ui.label(format!("tool_response: {:?}", tool_response));
     }
 
-    fn search_call_ui(ctx: &mut AppContext, query_call: &QueryCall, ui: &mut egui::Ui) {
+    fn search_call_ui(ctx: &mut AppContext, query_call: &QueryCall, ui: &mut egui::Ui, note_options: NoteOptions) {
         ui.add(search_icon(16.0, 16.0));
         ui.add_space(8.0);
 
-        query_call_ui(ctx.img_cache, ctx.ndb, query_call, ui);
+        query_call_ui(ctx.img_cache, ctx.ndb, query_call, ui, note_options.clone());
     }
 
     /// The ai has asked us to render some notes, so we do that here
@@ -282,6 +282,7 @@ impl<'a> DaveUi<'a> {
         jobs: &mut JobsCache,
         toolcalls: &[ToolCall],
         ui: &mut egui::Ui,
+        note_options: NoteOptions,
     ) -> Option<NoteAction> {
         let mut note_action: Option<NoteAction> = None;
 
@@ -302,7 +303,7 @@ impl<'a> DaveUi<'a> {
                             egui::vec2(ui.available_size().x, 32.0),
                             Layout::left_to_right(Align::Center),
                             |ui| {
-                                Self::search_call_ui(ctx, search_call, ui);
+                                Self::search_call_ui(ctx, search_call, ui, note_options.clone());
                             },
                         );
                     }
@@ -387,7 +388,7 @@ fn new_chat_button() -> impl egui::Widget {
     }
 }
 
-fn query_call_ui(cache: &mut notedeck::Images, ndb: &Ndb, query: &QueryCall, ui: &mut egui::Ui) {
+fn query_call_ui(cache: &mut notedeck::Images, ndb: &Ndb, query: &QueryCall, ui: &mut egui::Ui, note_options: NoteOptions) {
     ui.spacing_mut().item_spacing.x = 8.0;
     if let Some(pubkey) = query.author() {
         let txn = Transaction::new(ndb).unwrap();
@@ -400,6 +401,7 @@ fn query_call_ui(cache: &mut notedeck::Images, ndb: &Ndb, query: &QueryCall, ui:
                         ndb.get_profile_by_pubkey(&txn, pubkey.bytes())
                             .ok()
                             .as_ref(),
+                        note_options,
                     )
                     .size(ProfilePic::small_size() as f32),
                 );
