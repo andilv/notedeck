@@ -630,7 +630,7 @@ fn get_note_options(args: ColumnsArgs, settings_handler: &mut SettingsHandler) -
     );
     note_options.set(
         NoteOptions::HideMedia,
-        args.is_flag_set(ColumnsFlag::NoMedia),
+        args.is_flag_set(ColumnsFlag::NoMedia) || !settings_handler.img_cache(),
     );
     note_options.set(
         NoteOptions::RepliesNewestFirst,
