@@ -277,6 +277,7 @@ pub struct Images {
     /// cached imeta data
     pub metadata: HashMap<String, ImageMetadata>,
     pub gif_states: GifStateMap,
+    pub load_images: bool,
 }
 
 impl Images {
@@ -290,6 +291,7 @@ impl Images {
             gif_states: Default::default(),
             metadata: Default::default(),
             textures: TexturesCache::new(path.clone()),
+            load_images: true,
         }
     }
 
@@ -335,6 +337,7 @@ impl Images {
             &self.textures.static_image,
             &self.textures.animated,
             &mut self.gif_states,
+            self.load_images,
         );
         loader.latest(jobs, ui.ctx(), url, cache_type, img_type, animation_mode)
     }
@@ -379,6 +382,7 @@ impl Images {
                 &self.textures.static_image,
                 &self.textures.animated,
                 &mut self.gif_states,
+                self.load_images,
             ),
             &self.textures.blurred,
         )
@@ -393,6 +397,7 @@ impl Images {
             &self.textures.static_image,
             &self.textures.animated,
             &mut self.gif_states,
+            self.load_images,
         )
     }
 

@@ -32,6 +32,7 @@ pub enum SettingsAction {
     SetNoteBodyFontSize(f32),
     SetAnimateNavTransitions(bool),
     SetMaxHashtagsPerNote(usize),
+    SetImgCache(bool),
     OpenRelays,
     OpenCacheFolder,
     ClearCacheFolder,
@@ -95,6 +96,10 @@ impl SettingsAction {
             Self::SetMaxHashtagsPerNote(value) => {
                 settings.set_max_hashtags_per_note(value);
                 accounts.update_max_hashtags_per_note(value);
+            }
+
+            Self::SetImgCache(value) => {
+                settings.set_img_cache(value);
             }
         }
         route_action
@@ -471,6 +476,29 @@ impl<'a> SettingsView<'a> {
                     action = Some(SettingsAction::SetRepliestNewestFirst(
                         self.settings.show_replies_newest_first,
                     ));
+                }
+            });
+
+            ui.horizontal_wrapped(|ui| {
+                ui.label(richtext_small(tr!(
+                    self.note_context.i18n,
+                    "Show images:",
+                    "Label for Show images, others settings section",
+                )));
+
+                if ui
+                    .toggle_value(
+                        &mut self.settings.img_cache,
+                        RichText::new(tr!(
+                            self.note_context.i18n,
+                            "On",
+                            "Setting to turn on showing images in notes"
+                        ))
+                        .text_style(NotedeckTextStyle::Small.text_style()),
+                    )
+                    .changed()
+                {
+                    action = Some(SettingsAction::SetImgCache(self.settings.img_cache));
                 }
             });
 

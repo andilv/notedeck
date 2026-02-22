@@ -138,6 +138,8 @@ impl eframe::App for Notedeck {
         // handle account updates
         self.accounts.update(&mut self.ndb, &mut self.pool, ctx);
 
+        self.img_cache.load_images = self.settings.img_cache();
+
         self.zaps
             .process(&mut self.accounts, &mut self.global_wallet, &self.ndb);
 

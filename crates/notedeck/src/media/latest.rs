@@ -32,6 +32,7 @@ pub struct NoLoadingLatestTex<'a> {
     static_cache: &'a StaticImgTexCache,
     animated_cache: &'a AnimatedImgTexCache,
     gif_state: &'a mut GifStateMap,
+    load_images: bool,
 }
 
 impl<'a> NoLoadingLatestTex<'a> {
@@ -39,11 +40,13 @@ impl<'a> NoLoadingLatestTex<'a> {
         static_cache: &'a StaticImgTexCache,
         animated_cache: &'a AnimatedImgTexCache,
         gif_state: &'a mut GifStateMap,
+        load_images: bool,
     ) -> Self {
         Self {
             static_cache,
             animated_cache,
             gif_state,
+            load_images,
         }
     }
 
@@ -74,6 +77,10 @@ impl<'a> NoLoadingLatestTex<'a> {
         imgtype: ImageType,
         animation_mode: AnimationMode,
     ) -> LatestImageTex<'a> {
+        if !self.load_images {
+            return LatestImageTex::Pending;
+        }
+
         match cache_type {
             MediaCacheType::Image => {
                 match self.static_cache.get_or_request(jobs, ctx, url, imgtype) {

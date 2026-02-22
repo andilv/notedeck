@@ -51,6 +51,12 @@ pub struct Settings {
     pub tos_version: String,
     #[serde(default)]
     pub age_verified: bool,
+    #[serde(default = "default_true")]
+    pub img_cache: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 fn default_animate_nav_transitions() -> bool {
@@ -77,6 +83,7 @@ impl Default for Settings {
             tos_accepted_at: None,
             tos_version: default_tos_version(),
             age_verified: false,
+            img_cache: true,
         }
     }
 }
@@ -231,6 +238,11 @@ impl SettingsHandler {
         self.try_save_settings();
     }
 
+    pub fn set_img_cache(&mut self, value: bool) {
+        self.get_settings_mut().img_cache = value;
+        self.try_save_settings();
+    }
+
     pub fn update_batch<F>(&mut self, update_fn: F)
     where
         F: FnOnce(&mut Settings),
@@ -296,6 +308,10 @@ impl SettingsHandler {
             .as_ref()
             .map(|s| s.max_hashtags_per_note)
             .unwrap_or(DEFAULT_MAX_HASHTAGS_PER_NOTE)
+    }
+
+    pub fn img_cache(&self) -> bool {
+        self.current_settings.as_ref().map(|s| s.img_cache).unwrap_or(true)
     }
 
     pub fn welcome_completed(&self) -> bool {
